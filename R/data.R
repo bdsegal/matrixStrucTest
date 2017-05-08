@@ -1,17 +1,17 @@
 #' Big Five personality questionnaire
 #'
-#' A dataset containing Answers to the Big Five Personality Test
-#' constructed with items from the International Personality Item Pool.
-#' These data were collected (c. 2012) through on interactive online personality test. 
-#' Participants were informed that their responses would be recorded and used for 
-#' research at the beginning of the test and asked to confirm their consent at the 
-#' end of the test. The items were rated on a five point scale where 
-#' 1=Disagree, 3=Neutral, 5=Agree. All were presented on one page in the order 
-#' E1, N1, A1, C1, O1, E2...... 
+#' A dataset containing answers to a Big Five Personality Test conducted by
+#' http://personality-testing.info. These data were collected (c. 2012) through
+#' an interactive online personality test. The test was constructed with items 
+#' from the International Personality Item Pool. Participants were informed that
+#' their responses would be recorded and used for research at the beginning of 
+#' the test and asked to confirm their consent at the end of the test. The items
+#' were rated on a five point scale where 1=Disagree, 3=Neutral, 5=Agree. 
+#' All were presented on one page in the order E1, N1, A1, C1, O1, E2,...
 #'
 #' This dataset is for demonstration purposes only. Please see
 #' http://personality-testing.info/privacypolicy.html and 
-#' http://personality-testing.info/about/ for more information.
+#' http://personality-testing.info/about for more information.
 #'
 #' @format A data frame with 19,719 rows of  57 variables:
 #' \describe{
