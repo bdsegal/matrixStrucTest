@@ -338,7 +338,7 @@ print.mt <- function(mt) {
 
 
 prepBoxPlots <- function(A, group_list, absolute = TRUE){
-  #' Prepare data for box pltos
+  #' Prepare data for box plots
   #'
   #' This function prepares the data for making box plots
   #' @param A Distance or similarity matrix, e.g. correlation

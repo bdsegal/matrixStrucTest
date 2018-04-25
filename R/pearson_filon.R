@@ -66,7 +66,7 @@ X2Fun <- function(data, group_list, corMethod = "spearman"){
 
   # get initial OLS estimate and put in matrix for easy processing
   rhoHatOLSTri <- matrix(NA, nrow = nrow(A), ncol = ncol(A))
-  rhoHatOLSTri[upper.tri(rhoHatOLSTri)] <- L %*% solve(t(L) %*% L, t(L) %*% rho)
+  rhoHatOLSTri[upper.tri(rhoHatOLSTri)] <- L %*% solve(crossprod(L, L), crossprod(L, rho))
   rhoHatOLSTri[lower.tri(rhoHatOLSTri)] <- t(rhoHatOLSTri)[lower.tri(rhoHatOLSTri)]
   diag(rhoHatOLSTri) <- 1
 
@@ -81,8 +81,8 @@ X2Fun <- function(data, group_list, corMethod = "spearman"){
   }
   SigmaOLS[lower.tri(SigmaOLS)] <- t(SigmaOLS)[lower.tri(SigmaOLS)]
 
-  rhoHatGLS <- L %*% solve(t(L) %*% solve(SigmaOLS, L), t(L) %*% 
-               solve(SigmaOLS, rho))
+  rhoHatGLS <- L %*% solve(crossprod(L, solve(SigmaOLS, L)), crossprod(L, 
+               solve(SigmaOLS, rho)))
 
   # get covariance for Z transformed variables
   SigmaZ <- matrix(0, nrow = nInd, ncol = nInd)

@@ -2,7 +2,7 @@
 % Please edit documentation in R/hubert_t.R
 \name{prepBoxPlots}
 \alias{prepBoxPlots}
-\title{Prepare data for box pltos}
+\title{Prepare data for box plots}
 \usage{
 prepBoxPlots(A, group_list, absolute = TRUE)
 }
