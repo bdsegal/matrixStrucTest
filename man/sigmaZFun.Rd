@@ -9,4 +9,3 @@ sigmaZFun(s, t, index, A, Sigma)
 \description{
 Utility function
 }
-

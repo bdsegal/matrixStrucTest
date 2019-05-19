@@ -9,4 +9,3 @@ X2Fun(data, group_list, corMethod = "spearman")
 \description{
 X2 function
 }
-

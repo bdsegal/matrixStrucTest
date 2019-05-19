@@ -3,6 +3,7 @@
 S3method(print,mt)
 export(X2Fun)
 export(deltaSub)
+export(makeGroupList)
 export(matrixTest)
 export(matrixTestSub)
 export(multiSub)

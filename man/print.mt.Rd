@@ -14,4 +14,3 @@ This function prints results from matrixTest
 }
 \keyword{matrixTest}
 \keyword{print}
-

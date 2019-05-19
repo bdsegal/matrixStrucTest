@@ -64,4 +64,3 @@ ggplot(aes(x = as.factor(delta), y = a), data = box$multi)+
   theme_bw(22)+
 labs(x = expression(Delta), y = "|a|")
 }
-

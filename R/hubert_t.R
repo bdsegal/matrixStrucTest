@@ -93,12 +93,41 @@ matrixTestSub <- function(A, group_list_ord, Delta, multi_group_ind,
               Delta_upper = Delta_upper))
 }
 
-matrixTest <- function(A, group_list, B = 1000, absolute = TRUE){
+makeGroupList <- function(groups, A) {
+  #' Utility function: Turn character string in lavaan syntax into list
+  #'
+  #' @param groups: Character string in lavaan syntax specifying groups
+  #' @param A: A Distance or similarity matrix. Must have column names
+  #'
+  #' @return group_list List of column indices of A for each group
+  #' @export
+
+  split <- gsub(" ", "", unlist(strsplit(groups, "\\n")))
+  group_list <- vector(length = length(split), mode = "list")
+  for (i in 1:length(split)) {
+    sub_split <- unlist(strsplit(split[i], "~"))
+    names(group_list)[i] <- sub_split[1]
+
+    labels <- unlist(strsplit(sub_split[2], "\\+"))
+    group_list[[i]] <- which(colnames(A) %in% labels)
+  }
+
+  rm_group <- which(is.na(names(group_list)))
+  if (length(rm_group) >= 1) {
+    group_list <- group_list[-rm_group]
+  }
+
+return(group_list)
+}
+
+matrixTest <- function(A, group_list = NULL, groups = NULL, B = 1000, absolute = TRUE){
   #' Gamma and t function
   #'
   #' This function computes p-values for Hubert's Gamma and t statistics
   #' @param A Distance or similarity matrix, e.g. correlation
-  #' @param group_list List of groupings
+  #' @param groups Character string specifying the groups in lavaan syntax
+  #' @param group_list List of column indices of A for each group
+  #' @param model CFA model in lavaan syntax. 
   #' @param B Number of Monte Carlo resamples (defaults to B=1000)
   #' @param absolute Use the absolute values of A (defaults to TRUE)
 
@@ -121,6 +150,7 @@ matrixTest <- function(A, group_list, B = 1000, absolute = TRUE){
   #' @return Gamma_max_one_sided: Vector of max Hubert's Gamma statistics from permuted A (one-sided)
   #' @return Gamma_max_two_sided: Vector of max Hubert's Gamma statistics from permuted A (two-sided)
   #' @return B: number of Monte Carlo resamples
+  #' @return group_list: List of column/row indices corresponding to each group
   #' @keywords Hubert's Gamma, t-statistic, permutation, MC resampling
   #' @export
   #' @examples
@@ -134,24 +164,33 @@ matrixTest <- function(A, group_list, B = 1000, absolute = TRUE){
   #' # compute Spearman's correlation matrix
   #' A <- cor(big5[, items], use = "complete.obs", method = "spearman")
   #' 
-  #' # get column numbers for items within each block/group
+  #' # specify the groups
+  #' groups <- "extrovert ~ E1 + E2 + E3 + E4 + E5 + E6 + E7 + E8 + E9 + E10
+  #'            neurotic ~ N1 + N2 + N3 + N4 + N5 + N6 + N7 + N8 + N9 + N10
+  #'            agreeable ~ A1 + A2 + A3 + A4 + A5 + A6 + A7 + A8 + A9 + A10
+  #'            conscientious ~ C1 + C2 + C3 + C4 + C5 + C6 + C7 + C8 + C9 + C10
+  #'            open ~ O1 + O2 + O3 + O4 + O5 + O6 + O7 + O8 + O9 + O10"
+  #'
+  #' # compute permutation p-values
+  #' # Note: two-sided p-values from Hubert's Gamma printed by default
+  #' #       other results available by directing accessing them from the
+  #' #       returned object
+  #' result <- matrixTest(A = A, groups = groups, B = 1000, absolute = TRUE)
+  #'
+  #' # Alternative approach for specifying the groups as a list of column/row indices
   #' extrovert <- grep("E", colnames(A))
   #' neurotic <- grep("N", colnames(A))
   #' agreeable <- grep("A", colnames(A))
   #' conscientious <- grep("C", colnames(A))
   #' open <- grep("O", colnames(A))
   #' 
-  #' # put blocks/groups in list for matrixTest function
+  #' # put blocks/groups in list
   #' group_list <- list(extrovert = extrovert, 
   #'                    neurotic = neurotic, 
   #'                    agreeable = agreeable, 
   #'                    conscientious = conscientious,
   #'                    open = open)
   #' 
-  #' # compute permutation p-values
-  #' # Note: two-sided p-values from Hubert's Gamma printed by default
-  #' #       other results available by directing accessing them from the
-  #' #       returned object
   #' result <- matrixTest(A = A, group_list = group_list, B = 1000, absolute = TRUE)
   #' result
   #' 
@@ -159,7 +198,7 @@ matrixTest <- function(A, group_list, B = 1000, absolute = TRUE){
   #' library(ggplot2)
   #' library(reshape2)
   #' 
-  #' ord <- unlist(group_list)
+  #' ord <- unlist(result$group_list)
   #' diag(A) <- NA # remove diagonals from color scale
   #' Am <- melt(A[ord, ord])
   #' names(Am) <- c("x", "y", "value")
@@ -171,7 +210,22 @@ matrixTest <- function(A, group_list, B = 1000, absolute = TRUE){
   #'   scale_fill_gradient2(space="Lab", name="abs(Cor)", lim = c(0, 1))+
   #'   labs(x = "", y = "")+
   #'   theme(axis.text.x = element_text(angle = 90, vjust = .35,hjust=1))
-  
+
+  if(!is.null(groups) & !is.null(group_list)) {
+    stop("Both a 'groups' and 'group_list' were supplied as arguments. Only one of the two can be given.")
+  } else if(is.null(groups) & is.null(group_list)) {
+    stop("Either 'groups' or 'group_list' must be supplied as an argument")
+  }
+
+  # if groups given, convert to group_list
+  if(!is.null(groups)) {
+    if(is.null(colnames(A))) {
+      stop("When 'groups' is supplied, the matrix A must have column names")
+    }
+
+  group_list <- makeGroupList(groups, A)
+  }
+
   if(absolute){
     A <- abs(A)
   }
@@ -300,6 +354,7 @@ matrixTest <- function(A, group_list, B = 1000, absolute = TRUE){
               Gamma_overall = Gamma_overall,
               Gamma_max_one_sided = Gamma_max_one_sided,
               Gamma_max_two_sided = Gamma_max_two_sided,
+              group_list = group_list,
               B = B)
   class(ret) <- "mt"
   return(ret)
@@ -337,7 +392,7 @@ print.mt <- function(mt) {
 }
 
 
-prepBoxPlots <- function(A, group_list, absolute = TRUE){
+prepBoxPlots <- function(A, groups = NULL, group_list = NULL, absolute = TRUE){
   #' Prepare data for box plots
   #'
   #' This function prepares the data for making box plots
@@ -389,6 +444,21 @@ prepBoxPlots <- function(A, group_list, absolute = TRUE){
   #'   theme_bw(22)+
   #' labs(x = expression(Delta), y = "|a|")
    
+  if(!is.null(groups) & !is.null(group_list)) {
+    stop("Both a 'groups' and 'group_list' were supplied as arguments. Only one of the two can be given.")
+  } else if(is.null(groups) & is.null(group_list)) {
+    stop("Either 'groups' or 'group_list' must be supplied as an argument")
+  }
+
+  # if groups given, convert to group_list
+  if(!is.null(groups)) {
+    if(is.null(colnames(A))) {
+      stop("When 'groups' is supplied, the matrix A must have column names")
+    }
+
+    group_list <- makeGroupList(groups, A)
+  }
+
    if(absolute){
       A <- abs(A)
    }

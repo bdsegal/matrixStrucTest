@@ -39,4 +39,3 @@ Delta_upper: Upper triangular elements of Delta (used for box plot function)
 \description{
 Utility function: Gamma and t
 }
-

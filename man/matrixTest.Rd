@@ -4,16 +4,21 @@
 \alias{matrixTest}
 \title{Gamma and t function}
 \usage{
-matrixTest(A, group_list, B = 1000, absolute = TRUE)
+matrixTest(A, group_list = NULL, groups = NULL, B = 1000,
+  absolute = TRUE)
 }
 \arguments{
 \item{A}{Distance or similarity matrix, e.g. correlation}
 
-\item{group_list}{List of groupings}
+\item{group_list}{List of column indices of A for each group}
+
+\item{groups}{Character string specifying the groups in lavaan syntax}
 
 \item{B}{Number of Monte Carlo resamples (defaults to B=1000)}
 
 \item{absolute}{Use the absolute values of A (defaults to TRUE)}
+
+\item{model}{CFA model in lavaan syntax.}
 }
 \value{
 pt_overall_one_sided: Overall one-sided p-value using t statistic
@@ -53,6 +58,8 @@ Gamma_max_one_sided: Vector of max Hubert's Gamma statistics from permuted A (on
 Gamma_max_two_sided: Vector of max Hubert's Gamma statistics from permuted A (two-sided)
 
 B: number of Monte Carlo resamples
+
+group_list: List of column/row indices corresponding to each group
 }
 \description{
 This function computes p-values for Hubert's Gamma and t statistics
@@ -68,24 +75,33 @@ items <- grep("[0-9]", colnames(big5))
 # compute Spearman's correlation matrix
 A <- cor(big5[, items], use = "complete.obs", method = "spearman")
 
-# get column numbers for items within each block/group
+# specify the groups
+groups <- "extrovert ~ E1 + E2 + E3 + E4 + E5 + E6 + E7 + E8 + E9 + E10
+           neurotic ~ N1 + N2 + N3 + N4 + N5 + N6 + N7 + N8 + N9 + N10
+           agreeable ~ A1 + A2 + A3 + A4 + A5 + A6 + A7 + A8 + A9 + A10
+           conscientious ~ C1 + C2 + C3 + C4 + C5 + C6 + C7 + C8 + C9 + C10
+           open ~ O1 + O2 + O3 + O4 + O5 + O6 + O7 + O8 + O9 + O10"
+
+# compute permutation p-values
+# Note: two-sided p-values from Hubert's Gamma printed by default
+#       other results available by directing accessing them from the
+#       returned object
+result <- matrixTest(A = A, groups = groups, B = 1000, absolute = TRUE)
+
+# Alternative approach for specifying the groups as a list of column/row indices
 extrovert <- grep("E", colnames(A))
 neurotic <- grep("N", colnames(A))
 agreeable <- grep("A", colnames(A))
 conscientious <- grep("C", colnames(A))
 open <- grep("O", colnames(A))
 
-# put blocks/groups in list for matrixTest function
+# put blocks/groups in list
 group_list <- list(extrovert = extrovert, 
                    neurotic = neurotic, 
                    agreeable = agreeable, 
                    conscientious = conscientious,
                    open = open)
 
-# compute permutation p-values
-# Note: two-sided p-values from Hubert's Gamma printed by default
-#       other results available by directing accessing them from the
-#       returned object
 result <- matrixTest(A = A, group_list = group_list, B = 1000, absolute = TRUE)
 result
 
@@ -93,7 +109,7 @@ result
 library(ggplot2)
 library(reshape2)
 
-ord <- unlist(group_list)
+ord <- unlist(result$group_list)
 diag(A) <- NA # remove diagonals from color scale
 Am <- melt(A[ord, ord])
 names(Am) <- c("x", "y", "value")
@@ -112,4 +128,3 @@ ggplot(aes(x = x, y = y, fill = abs(value)), data = Am)+
 \keyword{permutation,}
 \keyword{resampling}
 \keyword{t-statistic,}
-

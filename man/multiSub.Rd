@@ -16,4 +16,3 @@ multiSub(i, j, group)
 \description{
 This function outputs TRUE if either i or j are in group, FALSE otherwise
 }
-

@@ -9,4 +9,3 @@ sigmaRhoFun(j, k, h, m, A)
 \description{
 Utility function
 }
-

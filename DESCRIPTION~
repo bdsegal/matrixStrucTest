@@ -1,0 +1,10 @@
+Package: matrixTest
+Title: Test for block-diagonal structure in symmetric matrices
+Version: 0.0.0.9000
+Authors@R: person("Brian", "Segal", email = "bdsegal@umich.edu", role = c("aut", "cre"))
+Description: This package tests for block-diagonal structure in symmetric matrices. The null hypothesis that the off-diagonal elements are exchangeable. It uses Monte Carlo resampling to estimate the permutation p-value for Hubert's Gamma and a t-statistic with unequal variance. Both overall and block-specific p-values are returned.
+Depends:
+    R (>= 3.1)
+License: GPL (>= 3)
+LazyData: true
+RoxygenNote: 5.0.1

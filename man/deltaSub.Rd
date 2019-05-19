@@ -17,4 +17,3 @@ deltaSub(i, j, group_list)
 This function outputs 1 if i and j are in at least one group together, 
 and 0 otherwise
 }
-
