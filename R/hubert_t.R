@@ -8,9 +8,9 @@ deltaSub <- function(i,j, group_list){
   #'
   #' This function outputs 1 if i and j are in at least one group together, 
   #' and 0 otherwise
-  #' @param i first index
-  #' @param j second index
-  #' @param group_list list of blocks
+  #' @param i First index
+  #' @param j Second index
+  #' @param group_list List of indices for each block
   #' @export
 
   i_group <- which(sapply(group_list, function(group){i %in% group}))
@@ -20,13 +20,13 @@ deltaSub <- function(i,j, group_list){
   as.numeric(length(intersect(i_group, j_group)) >= 1)
 }
 
-multiSub <- function(i,j, group){
+multiSub <- function(i, j, group){
   #' Utility function
   #'
   #' This function outputs TRUE if either i or j are in group, FALSE otherwise
-  #' @param i first index
-  #' @param j second index
-  #' @param group_list list of blocks
+  #' @param i First index
+  #' @param j Second index
+  #' @param group Indices for items in group
   #' @export
 
   i_in <- i %in% group
@@ -96,8 +96,8 @@ matrixTestSub <- function(A, group_list_ord, Delta, multi_group_ind,
 makeGroupList <- function(groups, A) {
   #' Utility function: Turn character string in lavaan syntax into list
   #'
-  #' @param groups: Character string in lavaan syntax specifying groups
-  #' @param A: A Distance or similarity matrix. Must have column names
+  #' @param groups Character string in lavaan syntax specifying groups
+  #' @param A A Distance or similarity matrix. Must have column names
   #'
   #' @return group_list List of column indices of A for each group
   #' @export
@@ -125,9 +125,8 @@ matrixTest <- function(A, group_list = NULL, groups = NULL, B = 1000, absolute =
   #'
   #' This function computes p-values for Hubert's Gamma and t statistics
   #' @param A Distance or similarity matrix, e.g. correlation
-  #' @param groups Character string specifying the groups in lavaan syntax
   #' @param group_list List of column indices of A for each group
-  #' @param model CFA model in lavaan syntax. 
+  #' @param groups CFA model in lavaan syntax. 
   #' @param B Number of Monte Carlo resamples (defaults to B=1000)
   #' @param absolute Use the absolute values of A (defaults to TRUE)
 
@@ -172,10 +171,13 @@ matrixTest <- function(A, group_list = NULL, groups = NULL, B = 1000, absolute =
   #'            open ~ O1 + O2 + O3 + O4 + O5 + O6 + O7 + O8 + O9 + O10"
   #'
   #' # compute permutation p-values
+  #' # Note: Using small B for fast execution. Set B >= 1000 in practice.
+  #' result <- matrixTest(A = A, groups = groups, B = 100, absolute = TRUE)
+  #'
   #' # Note: two-sided p-values from Hubert's Gamma printed by default
   #' #       other results available by directing accessing them from the
   #' #       returned object
-  #' result <- matrixTest(A = A, groups = groups, B = 1000, absolute = TRUE)
+  #' result
   #'
   #' # Alternative approach for specifying the groups as a list of column/row indices
   #' extrovert <- grep("E", colnames(A))
@@ -191,7 +193,12 @@ matrixTest <- function(A, group_list = NULL, groups = NULL, B = 1000, absolute =
   #'                    conscientious = conscientious,
   #'                    open = open)
   #' 
-  #' result <- matrixTest(A = A, group_list = group_list, B = 1000, absolute = TRUE)
+  #' # Note: Using small B for fast execution. Set B >= 1000 in practice.
+  #' result <- matrixTest(A = A, group_list = group_list, B = 100, absolute = TRUE)
+  #'
+  #' # Note: two-sided p-values from Hubert's Gamma printed by default
+  #' #       other results available by directing accessing them from the
+  #' #       returned object
   #' result
   #' 
   #' # Visualize groups
@@ -360,35 +367,37 @@ matrixTest <- function(A, group_list = NULL, groups = NULL, B = 1000, absolute =
   return(ret)
 }
 
-print.mt <- function(mt) {
+print.mt <- function(x, ...) {
   #' Print function for results
   #'
   #' This function prints results from matrixTest
-  #' @param mt Output from matrixTest
+  #' @param x Output from matrixTest
+  #' @param ... Further arguments passed to print
   #' @keywords matrixTest print
   #' @export
 
-  if(mt$pG_overall_two_sided > 1/(mt$B + 1)) {
+  if(x$pG_overall_two_sided > 1/(x$B + 1)) {
     result <- paste("    Test of matrix structure   \n\n",
-      prettyNum(mt$B, big.mark = ","), " Monte Carlo resamples, two-sided p-values",
+      prettyNum(x$B, big.mark = ","), " Monte Carlo resamples, two-sided p-values",
       "\n\nOverall Hubert's Gamma",
-      "\nGamma0 = ", signif(mt$Gamma0, 3), ", p-val = ", signif(mt$pG_overall_two_sided, 3),
+      "\nGamma0 = ", signif(x$Gamma0, 3), ", p-val = ", signif(x$pG_overall_two_sided, 3),
       "\n\nBlock-specific Hubert's Gamma", sep = "")
   } else {
     result <- paste("    Test of matrix structure   \n\n",
-      prettyNum(mt$B, big.mark = ","), " Monte Carlo resamples, two-sided p-values",
+      prettyNum(x$B, big.mark = ","), " Monte Carlo resamples, two-sided p-values",
       "\n\nOverall Hubert's Gamma",
-      "\nGamma0 = ", signif(mt$Gamma0, 3), ", p-val < ", 1/mt$B,
+      "\nGamma0 = ", signif(x$Gamma0, 3), ", p-val < ", 1/x$B,
       "\n\nBlock-specific Hubert's Gamma", sep = "")
   }
 
-  p_multi <- mt$pG_multi_two_sided
-  hit_min <- p_multi == 1/(mt$B + 1)
+  p_multi <- x$pG_multi_two_sided
+  hit_min <- p_multi == 1/(x$B + 1)
   p_multi <- as.character(signif(p_multi, 3))
-  p_multi[hit_min] <- paste("<", 1/(mt$B))
+  p_multi[hit_min] <- paste("<", 1/(x$B))
   writeLines(result)
-  print(data.frame(Gamma0 = signif(mt$Gamma0k, 3),
-              pval = p_multi))
+  print(data.frame(Gamma0 = signif(x$Gamma0k, 3),
+                   pval = p_multi),
+        ...)
 }
 
 
@@ -397,8 +406,8 @@ prepBoxPlots <- function(A, groups = NULL, group_list = NULL, absolute = TRUE){
   #'
   #' This function prepares the data for making box plots
   #' @param A Distance or similarity matrix, e.g. correlation
+  #' @param groups CFA model in lavaan syntax. 
   #' @param group_list List of groupings
-  #' @param B Number of Monte Carlo resamples (defaults to B=1000)
   #' @param absolute Use the absolute values of A (defaults to TRUE)
   #' @return multi: data frame for making box plots for block-specific tests
   #' @return overall: data frame for making box plots for overall test
@@ -415,22 +424,14 @@ prepBoxPlots <- function(A, groups = NULL, group_list = NULL, absolute = TRUE){
   #' # compute Spearman's correlation matrix
   #' A <- cor(big5[, items], use = "complete.obs", method = "spearman")
   #' 
-  #' # get column numbers for items within each block/group
-  #' extrovert <- grep("E", colnames(A))
-  #' neurotic <- grep("N", colnames(A))
-  #' agreeable <- grep("A", colnames(A))
-  #' conscientious <- grep("C", colnames(A))
-  #' open <- grep("O", colnames(A))
-  #' 
-  #' # put blocks/groups in list for matrixTest function
-  #' group_list <- list(extrovert = extrovert, 
-  #'                    neurotic = neurotic, 
-  #'                    agreeable = agreeable, 
-  #'                    conscientious = conscientious,
-  #'                    open = open)
+  #' groups <- "extrovert ~ E1 + E2 + E3 + E4 + E5 + E6 + E7 + E8 + E9 + E10
+  #'            neurotic ~ N1 + N2 + N3 + N4 + N5 + N6 + N7 + N8 + N9 + N10
+  #'            agreeable ~ A1 + A2 + A3 + A4 + A5 + A6 + A7 + A8 + A9 + A10
+  #'            conscientious ~ C1 + C2 + C3 + C4 + C5 + C6 + C7 + C8 + C9 + C10
+  #'            open ~ O1 + O2 + O3 + O4 + O5 + O6 + O7 + O8 + O9 + O10"
   #' 
   #' # Make box plots contrasting within and between group correlations
-  #' box <- prepBoxPlots(A = A, group_list, absolute = TRUE)
+  #' box <- prepBoxPlots(A = A, groups = groups, absolute = TRUE)
   #' 
   #' ggplot(aes(x = as.factor(delta), y = a), data = box$overall)+
   #'   geom_boxplot()+

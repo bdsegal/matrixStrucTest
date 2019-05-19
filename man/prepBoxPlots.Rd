@@ -4,16 +4,16 @@
 \alias{prepBoxPlots}
 \title{Prepare data for box plots}
 \usage{
-prepBoxPlots(A, group_list, absolute = TRUE)
+prepBoxPlots(A, groups = NULL, group_list = NULL, absolute = TRUE)
 }
 \arguments{
 \item{A}{Distance or similarity matrix, e.g. correlation}
 
+\item{groups}{CFA model in lavaan syntax.}
+
 \item{group_list}{List of groupings}
 
 \item{absolute}{Use the absolute values of A (defaults to TRUE)}
-
-\item{B}{Number of Monte Carlo resamples (defaults to B=1000)}
 }
 \value{
 multi: data frame for making box plots for block-specific tests
@@ -35,22 +35,14 @@ items <- grep("[0-9]", colnames(big5))
 # compute Spearman's correlation matrix
 A <- cor(big5[, items], use = "complete.obs", method = "spearman")
 
-# get column numbers for items within each block/group
-extrovert <- grep("E", colnames(A))
-neurotic <- grep("N", colnames(A))
-agreeable <- grep("A", colnames(A))
-conscientious <- grep("C", colnames(A))
-open <- grep("O", colnames(A))
-
-# put blocks/groups in list for matrixTest function
-group_list <- list(extrovert = extrovert, 
-                   neurotic = neurotic, 
-                   agreeable = agreeable, 
-                   conscientious = conscientious,
-                   open = open)
+groups <- "extrovert ~ E1 + E2 + E3 + E4 + E5 + E6 + E7 + E8 + E9 + E10
+           neurotic ~ N1 + N2 + N3 + N4 + N5 + N6 + N7 + N8 + N9 + N10
+           agreeable ~ A1 + A2 + A3 + A4 + A5 + A6 + A7 + A8 + A9 + A10
+           conscientious ~ C1 + C2 + C3 + C4 + C5 + C6 + C7 + C8 + C9 + C10
+           open ~ O1 + O2 + O3 + O4 + O5 + O6 + O7 + O8 + O9 + O10"
 
 # Make box plots contrasting within and between group correlations
-box <- prepBoxPlots(A = A, group_list, absolute = TRUE)
+box <- prepBoxPlots(A = A, groups = groups, absolute = TRUE)
 
 ggplot(aes(x = as.factor(delta), y = a), data = box$overall)+
   geom_boxplot()+

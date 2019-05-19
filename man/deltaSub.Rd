@@ -7,11 +7,11 @@
 deltaSub(i, j, group_list)
 }
 \arguments{
-\item{i}{first index}
+\item{i}{First index}
 
-\item{j}{second index}
+\item{j}{Second index}
 
-\item{group_list}{list of blocks}
+\item{group_list}{List of indices for each block}
 }
 \description{
 This function outputs 1 if i and j are in at least one group together, 

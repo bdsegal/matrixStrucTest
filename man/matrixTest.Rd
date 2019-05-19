@@ -12,13 +12,11 @@ matrixTest(A, group_list = NULL, groups = NULL, B = 1000,
 
 \item{group_list}{List of column indices of A for each group}
 
-\item{groups}{Character string specifying the groups in lavaan syntax}
+\item{groups}{CFA model in lavaan syntax.}
 
 \item{B}{Number of Monte Carlo resamples (defaults to B=1000)}
 
 \item{absolute}{Use the absolute values of A (defaults to TRUE)}
-
-\item{model}{CFA model in lavaan syntax.}
 }
 \value{
 pt_overall_one_sided: Overall one-sided p-value using t statistic
@@ -83,10 +81,13 @@ groups <- "extrovert ~ E1 + E2 + E3 + E4 + E5 + E6 + E7 + E8 + E9 + E10
            open ~ O1 + O2 + O3 + O4 + O5 + O6 + O7 + O8 + O9 + O10"
 
 # compute permutation p-values
+# Note: Using small B for fast execution. Set B >= 1000 in practice.
+result <- matrixTest(A = A, groups = groups, B = 100, absolute = TRUE)
+
 # Note: two-sided p-values from Hubert's Gamma printed by default
 #       other results available by directing accessing them from the
 #       returned object
-result <- matrixTest(A = A, groups = groups, B = 1000, absolute = TRUE)
+result
 
 # Alternative approach for specifying the groups as a list of column/row indices
 extrovert <- grep("E", colnames(A))
@@ -102,7 +103,12 @@ group_list <- list(extrovert = extrovert,
                    conscientious = conscientious,
                    open = open)
 
-result <- matrixTest(A = A, group_list = group_list, B = 1000, absolute = TRUE)
+# Note: Using small B for fast execution. Set B >= 1000 in practice.
+result <- matrixTest(A = A, group_list = group_list, B = 100, absolute = TRUE)
+
+# Note: two-sided p-values from Hubert's Gamma printed by default
+#       other results available by directing accessing them from the
+#       returned object
 result
 
 # Visualize groups

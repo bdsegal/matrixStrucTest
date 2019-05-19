@@ -4,10 +4,12 @@
 \alias{print.mt}
 \title{Print function for results}
 \usage{
-\method{print}{mt}(mt)
+\method{print}{mt}(x, ...)
 }
 \arguments{
-\item{mt}{Output from matrixTest}
+\item{x}{Output from matrixTest}
+
+\item{...}{Further arguments passed to print}
 }
 \description{
 This function prints results from matrixTest

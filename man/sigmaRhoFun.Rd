@@ -6,6 +6,17 @@
 \usage{
 sigmaRhoFun(j, k, h, m, A)
 }
+\arguments{
+\item{j}{First index}
+
+\item{k}{Second index}
+
+\item{h}{Third index}
+
+\item{m}{Fourth index}
+
+\item{A}{Correlation matrix}
+}
 \description{
 Utility function
 }

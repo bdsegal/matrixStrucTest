@@ -7,9 +7,9 @@
 makeGroupList(groups, A)
 }
 \arguments{
-\item{groups:}{Character string in lavaan syntax specifying groups}
+\item{groups}{Character string in lavaan syntax specifying groups}
 
-\item{A:}{A Distance or similarity matrix. Must have column names}
+\item{A}{A Distance or similarity matrix. Must have column names}
 }
 \value{
 group_list List of column indices of A for each group

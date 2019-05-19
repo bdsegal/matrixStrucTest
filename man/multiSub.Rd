@@ -7,11 +7,11 @@
 multiSub(i, j, group)
 }
 \arguments{
-\item{i}{first index}
+\item{i}{First index}
 
-\item{j}{second index}
+\item{j}{Second index}
 
-\item{group_list}{list of blocks}
+\item{group}{Indices for items in group}
 }
 \description{
 This function outputs TRUE if either i or j are in group, FALSE otherwise

@@ -6,6 +6,17 @@
 \usage{
 sigmaZFun(s, t, index, A, Sigma)
 }
+\arguments{
+\item{s}{First index}
+
+\item{t}{Second index}
+
+\item{index}{Matrix with two columns with index pairs given by rows}
+
+\item{A}{Correlation matrix}
+
+\item{Sigma}{Variance-covariances of correlation matrix A}
+}
 \description{
 Utility function
 }

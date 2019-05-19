@@ -1,8 +1,6 @@
 # matrixTest
 
-This is an R package that implements tests for block-diagonal structure in symmetric matrices as described in Segal et al. (2019). The null hypothesis is that the off-diagonal elements are exchangeable. Monte Carlo methods are used to approximate the permutation p-value with Hubert's Gamma (Hubert, 1976) and a t-statistic with unequal variance. This package also implements a Chi-squared statistic described by Steiger (1980)
-
-Please see Segal, et. al for more information.
+Tests for block-diagonal structure in symmetric matrices (e.g. correlation matrices) under the null hypothesis of exchangeable off-diagonal elements. As described in Segal et al. (2019), these tests can be useful for construct validation either by themselves or as a complement to confirmatory factor analysis. Monte Carlo methods are used to approximate the permutation p-value with Hubert's Gamma (Hubert, 1976) and a t-statistic with unequal variance. This package also implements the Chi-squared statistic described by Steiger (1980).
 
 ## Installation
 

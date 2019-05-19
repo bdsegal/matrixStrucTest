@@ -1,8 +1,13 @@
 # Testing using Pearson and Filon's results -- Steiger's method
 
 sigmaRhoFun <- function(j, k, h, m, A) {
-  #' Utility function
+  #' Utility function   
   #'
+  #' @param j First index
+  #' @param k Second index
+  #' @param h Third index
+  #' @param m Fourth index
+  #' @param A Correlation matrix
   #' @export
 
   0.5 * (
@@ -15,6 +20,11 @@ sigmaRhoFun <- function(j, k, h, m, A) {
 sigmaZFun <- function(s, t, index, A, Sigma) {
   #' Utility function
   #'
+  #' @param s First index
+  #' @param t Second index
+  #' @param index Matrix with two columns with index pairs given by rows
+  #' @param A Correlation matrix
+  #' @param Sigma Variance-covariances of correlation matrix A
   #' @export
   Sigma[s, t] / ((1 - A[index[s, 1], index[s, 2]]^2) * 
                  (1 - A[index[t, 1], index[t, 2]]^2))
@@ -22,8 +32,14 @@ sigmaZFun <- function(s, t, index, A, Sigma) {
 
 
 X2Fun <- function(data, group_list, corMethod = "spearman"){
-  #' X2 function
+  #' Goodness-of-fit chi-squared statistic described by Steiger (1980).
   #'
+  #' References:
+  #' Steiger, J. H. (1980). Tests for comparing elements of a correlation matrix. Psychological Bulletin, 87(2) 245-251.
+  #' @param data Data frame
+  #' @param group_list List of column indices of A for each group
+  #' @param corMethod Type of correlations; passed to cor()
+  #' @importFrom stats complete.cases cor pchisq t.test
   #' @export
 
   data <- data[complete.cases(data), ]
@@ -70,13 +86,12 @@ X2Fun <- function(data, group_list, corMethod = "spearman"){
   rhoHatOLSTri[lower.tri(rhoHatOLSTri)] <- t(rhoHatOLSTri)[lower.tri(rhoHatOLSTri)]
   diag(rhoHatOLSTri) <- 1
 
-
   # get SigmaOLS
   SigmaOLS <- matrix(0, nrow = nInd, ncol = nInd)
   for(s in 1:(nInd -1)) {
     for (t in (s):nInd) {
       SigmaOLS[s,t] <- sigmaRhoFun(index[s,1], index[s,2], 
-                                  index[t,1], index[t,2], rhoHatOLSTri)
+                                   index[t,1], index[t,2], rhoHatOLSTri)
     }
   }
   SigmaOLS[lower.tri(SigmaOLS)] <- t(SigmaOLS)[lower.tri(SigmaOLS)]

@@ -2,10 +2,18 @@
 % Please edit documentation in R/pearson_filon.R
 \name{X2Fun}
 \alias{X2Fun}
-\title{X2 function}
+\title{Goodness-of-fit chi-squared statistic described by Steiger (1980).}
 \usage{
 X2Fun(data, group_list, corMethod = "spearman")
 }
+\arguments{
+\item{data}{Data frame}
+
+\item{group_list}{List of column indices of A for each group}
+
+\item{corMethod}{Type of correlations; passed to cor()}
+}
 \description{
-X2 function
+References:
+Steiger, J. H. (1980). Tests for comparing elements of a correlation matrix. Psychological Bulletin, 87(2) 245-251.
 }
