@@ -1,5 +1,6 @@
 Test environments:
-* Local Ubuntu 18.04.2 LTS, R 3.6.0
+* Local Ubuntu 18.04.2 LTS (x86_64-pc-linux-gnu 64-bit), R 3.6.0
+* Local macOS Sierra 10.12.6, R 3.5.1
 
 R CMD check results:
 * There were no ERRORs or WARNINGs. 

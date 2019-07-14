@@ -2,7 +2,7 @@
 % Please edit documentation in R/hubert_t.R
 \name{deltaSub}
 \alias{deltaSub}
-\title{Utility function}
+\title{Sub-routine to create Delta matrix}
 \usage{
 deltaSub(i, j, group_list)
 }
@@ -14,6 +14,7 @@ deltaSub(i, j, group_list)
 \item{group_list}{List of indices for each block}
 }
 \description{
-This function outputs 1 if i and j are in at least one group together, 
-and 0 otherwise
+This sub-routine outputs 1 if i and j are in at least one group together, 
+and 0 otherwise, and is called by \code{matrixStrucTest} and 
+\code{prepBoxPlots}.
 }

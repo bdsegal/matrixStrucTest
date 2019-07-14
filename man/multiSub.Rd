@@ -2,7 +2,7 @@
 % Please edit documentation in R/hubert_t.R
 \name{multiSub}
 \alias{multiSub}
-\title{Utility function}
+\title{Sub-routine to create Delta matrix for block-specific tests}
 \usage{
 multiSub(i, j, group)
 }
@@ -14,5 +14,7 @@ multiSub(i, j, group)
 \item{group}{Indices for items in group}
 }
 \description{
-This function outputs TRUE if either i or j are in group, FALSE otherwise
+This sub-routine outputs TRUE if either \code{i} or \code{j} are in 
+\code{group}, FALSE otherwise, and is called by \code{matrixStrucTest} 
+and \code{prepBoxPlots}.
 }

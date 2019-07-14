@@ -14,6 +14,7 @@ X2Fun(data, group_list, corMethod = "spearman")
 \item{corMethod}{Type of correlations; passed to cor()}
 }
 \description{
-References:
+This function computed the goodness-of-fit chi-squared statistic described by Steiger (1980).
+Reference:
 Steiger, J. H. (1980). Tests for comparing elements of a correlation matrix. Psychological Bulletin, 87(2) 245-251.
 }

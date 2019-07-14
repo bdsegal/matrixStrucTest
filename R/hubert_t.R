@@ -2,16 +2,15 @@
 # t-statistic with unequal variance
 
 # functions for making Delta matrix -------------------------------------------
-
 deltaSub <- function(i,j, group_list){
-  #' Utility function
+  #' Sub-routine to create Delta matrix
   #'
-  #' This function outputs 1 if i and j are in at least one group together, 
-  #' and 0 otherwise
+  #' This sub-routine outputs 1 if i and j are in at least one group together, 
+  #' and 0 otherwise, and is called by \code{matrixStrucTest} and 
+  #' \code{prepBoxPlots}.
   #' @param i First index
   #' @param j Second index
   #' @param group_list List of indices for each block
-  #' @export
 
   i_group <- which(sapply(group_list, function(group){i %in% group}))
   j_group <- which(sapply(group_list, function(group){j %in% group}))
@@ -21,24 +20,55 @@ deltaSub <- function(i,j, group_list){
 }
 
 multiSub <- function(i, j, group){
-  #' Utility function
+  #' Sub-routine to create Delta matrix for block-specific tests
   #'
-  #' This function outputs TRUE if either i or j are in group, FALSE otherwise
+  #' This sub-routine outputs TRUE if either \code{i} or \code{j} are in 
+  #' \code{group}, FALSE otherwise, and is called by \code{matrixStrucTest} 
+  #' and \code{prepBoxPlots}.
   #' @param i First index
   #' @param j Second index
   #' @param group Indices for items in group
-  #' @export
 
   i_in <- i %in% group
   j_in <- j %in% group
   
-  (i_in + j_in) >=1
+  (i_in + j_in) >= 1
 }
 
-# Both t-stat and Hubert's gamma ----------------------------------------------
-matrixTestSub <- function(A, group_list_ord, Delta, multi_group_ind,
+makeGroupList <- function(groups, A) {
+  #' Convert character string in lavaan syntax into a list of indices
+  #'
+  #' This sub-routine is called by \code{matrixStrucTest} and \code{prepBoxPlots}.
+  #' @param groups Character string in lavaan syntax specifying groups
+  #' @param A A Distance or similarity matrix. Must have column names
+  #'
+  #' @return group_list List of column indices of A corresponding to each group
+  #' @export
+
+  split <- gsub(" ", "", unlist(strsplit(groups, "\\n")))
+  group_list <- vector(length = length(split), mode = "list")
+  for (i in 1:length(split)) {
+    sub_split <- unlist(strsplit(split[i], "~"))
+    names(group_list)[i] <- sub_split[1]
+
+    labels <- unlist(strsplit(sub_split[2], "\\+"))
+    group_list[[i]] <- which(colnames(A) %in% labels)
+  }
+
+  rm_group <- which(is.na(names(group_list)))
+  if (length(rm_group) >= 1) {
+    group_list <- group_list[-rm_group]
+  }
+
+  return(group_list)
+}
+
+# t-statistic and Hubert's gamma ----------------------------------------------
+matrixStrucTestSub <- function(A, group_list_ord, Delta, multi_group_ind,
                          A_upper_ind, K){
-  #' Utility function: Gamma and t
+  #' Compute Gamma and t-statistics for a single permutation
+  #'
+  #' This sub-routine is called by \code{matrixStrucTest} and \code{prepBoxPlots}.
   #' @param A Distance or similarity matrix, e.g. correlation
   #' @param group_list_ord List of groupings for ordered matrix A
   #' @param Delta Delta matrix
@@ -53,7 +83,6 @@ matrixTestSub <- function(A, group_list_ord, Delta, multi_group_ind,
   #' @return Deltak_list: List of values in Delta used for each block-specific test
   #' @return A_upper: Upper triangular elements of A (used for box plot function)
   #' @return Delta_upper: Upper triangular elements of Delta (used for box plot function)
-  #' @export
 
   # Calculate Hubert's Gamma with upper triangular elements
   A_upper <- A[upper.tri(A)]
@@ -85,48 +114,23 @@ matrixTestSub <- function(A, group_list_ord, Delta, multi_group_ind,
 
   return(list(Gamma_overall = Gamma_overall,
               Gamma_multi = Gamma_multi,
-  	          t_overall = t_overall,
+              t_overall = t_overall,
               t_multi = t_multi,
-    				  Ak_list = Ak_list,
+              Ak_list = Ak_list,
               Deltak_list = Deltak_list,
-    				  A_upper = A_upper,
+              A_upper = A_upper,
               Delta_upper = Delta_upper))
 }
 
-makeGroupList <- function(groups, A) {
-  #' Utility function: Turn character string in lavaan syntax into list
+
+matrixStrucTest <- function(A, group_list = NULL, groups = NULL, B = 1000, absolute = TRUE){
+  #' Permutation p-values for Gamma and t-statistics
   #'
-  #' @param groups Character string in lavaan syntax specifying groups
-  #' @param A A Distance or similarity matrix. Must have column names
-  #'
-  #' @return group_list List of column indices of A for each group
-  #' @export
-
-  split <- gsub(" ", "", unlist(strsplit(groups, "\\n")))
-  group_list <- vector(length = length(split), mode = "list")
-  for (i in 1:length(split)) {
-    sub_split <- unlist(strsplit(split[i], "~"))
-    names(group_list)[i] <- sub_split[1]
-
-    labels <- unlist(strsplit(sub_split[2], "\\+"))
-    group_list[[i]] <- which(colnames(A) %in% labels)
-  }
-
-  rm_group <- which(is.na(names(group_list)))
-  if (length(rm_group) >= 1) {
-    group_list <- group_list[-rm_group]
-  }
-
-return(group_list)
-}
-
-matrixTest <- function(A, group_list = NULL, groups = NULL, B = 1000, absolute = TRUE){
-  #' Gamma and t function
-  #'
-  #' This function computes p-values for Hubert's Gamma and t statistics
+  #' This function computes permutation p-values for Hubert's Gamma and t-statistics
+  #' for both overall and block-specific tests.
   #' @param A Distance or similarity matrix, e.g. correlation
-  #' @param group_list List of column indices of A for each group
-  #' @param groups CFA model in lavaan syntax. 
+  #' @param groups CFA model in lavaan syntax. Either \code{groups} or \code{group_list} but not both must be supplied.
+  #' @param group_list List of column indices of A for each group. Either \code{groups} or \code{group_list} but not both must be supplied.
   #' @param B Number of Monte Carlo resamples (defaults to B=1000)
   #' @param absolute Use the absolute values of A (defaults to TRUE)
 
@@ -153,8 +157,8 @@ matrixTest <- function(A, group_list = NULL, groups = NULL, B = 1000, absolute =
   #' @keywords Hubert's Gamma, t-statistic, permutation, MC resampling
   #' @export
   #' @examples
-  #' # example for matrixText package
-  #' library(matrixTest)
+  #' # example for matrixStrucTest package
+  #' library(matrixStrucTest)
   #' data("big5")
   #'
   #' # get column numbers for questionnaire items
@@ -171,8 +175,8 @@ matrixTest <- function(A, group_list = NULL, groups = NULL, B = 1000, absolute =
   #'            open ~ O1 + O2 + O3 + O4 + O5 + O6 + O7 + O8 + O9 + O10"
   #'
   #' # compute permutation p-values
-  #' # Note: Using small B for fast execution. Set B >= 1000 in practice.
-  #' result <- matrixTest(A = A, groups = groups, B = 100, absolute = TRUE)
+  #' # Note: Using small B for fast checking on CRAN. Set B >= 1000 in practice.
+  #' result <- matrixStrucTest(A = A, groups = groups, B = 100, absolute = TRUE)
   #'
   #' # Note: two-sided p-values from Hubert's Gamma printed by default
   #' #       other results available by directing accessing them from the
@@ -193,8 +197,8 @@ matrixTest <- function(A, group_list = NULL, groups = NULL, B = 1000, absolute =
   #'                    conscientious = conscientious,
   #'                    open = open)
   #' 
-  #' # Note: Using small B for fast execution. Set B >= 1000 in practice.
-  #' result <- matrixTest(A = A, group_list = group_list, B = 100, absolute = TRUE)
+  #' # Note: Using small B for fast checking on CRAN. Set B >= 1000 in practice.
+  #' result <- matrixStrucTest(A = A, group_list = group_list, B = 100, absolute = TRUE)
   #'
   #' # Note: two-sided p-values from Hubert's Gamma printed by default
   #' #       other results available by directing accessing them from the
@@ -286,7 +290,7 @@ matrixTest <- function(A, group_list = NULL, groups = NULL, B = 1000, absolute =
   }
 
   # observed test statistic
-  out0 <- matrixTestSub(A = A_ord,
+  out0 <- matrixStrucTestSub(A = A_ord,
   	                  group_list_ord = group_list_ord,
   	                  Delta = Delta_ord, 
    	                  multi_group_ind = multi_group_ind,
@@ -307,7 +311,7 @@ matrixTest <- function(A, group_list = NULL, groups = NULL, B = 1000, absolute =
   for (b in 1:B){
     perm <- sample(1:p)
     Ab <- A_ord[perm, perm]
-    out <- matrixTestSub(A = Ab,
+    out <- matrixStrucTestSub(A = Ab,
     	                 group_list_ord = group_list_ord,
     	                 Delta = Delta_ord,
      	                 multi_group_ind = multi_group_ind,
@@ -363,17 +367,17 @@ matrixTest <- function(A, group_list = NULL, groups = NULL, B = 1000, absolute =
               Gamma_max_two_sided = Gamma_max_two_sided,
               group_list = group_list,
               B = B)
-  class(ret) <- "mt"
+  class(ret) <- "mst"
   return(ret)
 }
 
-print.mt <- function(x, ...) {
-  #' Print function for results
+print.mst <- function(x, ...) {
+  #' Print results from \code{matrixStrucTest}
   #'
-  #' This function prints results from matrixTest
-  #' @param x Output from matrixTest
+  #' This function prints results from an object returned by \code{matrixStrucTest}.
+  #' @param x Output from matrixStrucTest
   #' @param ... Further arguments passed to print
-  #' @keywords matrixTest print
+  #' @keywords matrixStrucTest print
   #' @export
 
   if(x$pG_overall_two_sided > 1/(x$B + 1)) {
@@ -400,20 +404,19 @@ print.mt <- function(x, ...) {
         ...)
 }
 
-
 prepBoxPlots <- function(A, groups = NULL, group_list = NULL, absolute = TRUE){
   #' Prepare data for box plots
   #'
-  #' This function prepares the data for making box plots
+  #' This function prepares the data for making box plots.
   #' @param A Distance or similarity matrix, e.g. correlation
-  #' @param groups CFA model in lavaan syntax. 
-  #' @param group_list List of groupings
+  #' @param groups CFA model in lavaan syntax. Either \code{groups} or \code{group_list} but not both must be supplied.
+  #' @param group_list List of groupings. Either \code{groups} or \code{group_list} but not both must be supplied.
   #' @param absolute Use the absolute values of A (defaults to TRUE)
   #' @return multi: data frame for making box plots for block-specific tests
   #' @return overall: data frame for making box plots for overall test
   #' @export
   #' @examples
-  #' library(matrixTest)
+  #' library(matrixStrucTest)
   #' library(ggplot2)
   #' 
   #' data("big5")
@@ -513,7 +516,7 @@ prepBoxPlots <- function(A, groups = NULL, group_list = NULL, absolute = TRUE){
   }
  
   # observed test statistic
-  out <- matrixTestSub(A = A_ord,
+  out <- matrixStrucTestSub(A = A_ord,
                      group_list_ord = group_list_ord,
                      Delta = Delta_ord, 
                      multi_group_ind = multi_group_ind,

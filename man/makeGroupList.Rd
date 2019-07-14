@@ -2,7 +2,7 @@
 % Please edit documentation in R/hubert_t.R
 \name{makeGroupList}
 \alias{makeGroupList}
-\title{Utility function: Turn character string in lavaan syntax into list}
+\title{Convert character string in lavaan syntax into a list of indices}
 \usage{
 makeGroupList(groups, A)
 }
@@ -12,8 +12,8 @@ makeGroupList(groups, A)
 \item{A}{A Distance or similarity matrix. Must have column names}
 }
 \value{
-group_list List of column indices of A for each group
+group_list List of column indices of A corresponding to each group
 }
 \description{
-Utility function: Turn character string in lavaan syntax into list
+This sub-routine is called by \code{matrixStrucTest} and \code{prepBoxPlots}.
 }

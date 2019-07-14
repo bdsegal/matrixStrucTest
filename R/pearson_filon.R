@@ -1,14 +1,14 @@
 # Testing using Pearson and Filon's results -- Steiger's method
 
 sigmaRhoFun <- function(j, k, h, m, A) {
-  #' Utility function   
+  #' Sub-routine to compute OLS estimates of covariance between correlations
   #'
+  #' This sub-routine is called by \code{X2fun}.
   #' @param j First index
   #' @param k Second index
   #' @param h Third index
   #' @param m Fourth index
   #' @param A Correlation matrix
-  #' @export
 
   0.5 * (
   (A[j,h] - A[j,k]*A[k,h]) * (A[k,m] - A[k,h]*A[h,m]) +
@@ -18,14 +18,14 @@ sigmaRhoFun <- function(j, k, h, m, A) {
 }
 
 sigmaZFun <- function(s, t, index, A, Sigma) {
-  #' Utility function
+  #' Sub-routine to get covariance of z-transformed variables
   #'
+  #' This sub-routine is called by \code{X2fun}.
   #' @param s First index
   #' @param t Second index
   #' @param index Matrix with two columns with index pairs given by rows
   #' @param A Correlation matrix
   #' @param Sigma Variance-covariances of correlation matrix A
-  #' @export
   Sigma[s, t] / ((1 - A[index[s, 1], index[s, 2]]^2) * 
                  (1 - A[index[t, 1], index[t, 2]]^2))
 }
@@ -34,7 +34,8 @@ sigmaZFun <- function(s, t, index, A, Sigma) {
 X2Fun <- function(data, group_list, corMethod = "spearman"){
   #' Goodness-of-fit chi-squared statistic described by Steiger (1980).
   #'
-  #' References:
+  #' This function computed the goodness-of-fit chi-squared statistic described by Steiger (1980).
+  #' Reference:
   #' Steiger, J. H. (1980). Tests for comparing elements of a correlation matrix. Psychological Bulletin, 87(2) 245-251.
   #' @param data Data frame
   #' @param group_list List of column indices of A for each group

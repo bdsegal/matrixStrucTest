@@ -9,9 +9,9 @@ prepBoxPlots(A, groups = NULL, group_list = NULL, absolute = TRUE)
 \arguments{
 \item{A}{Distance or similarity matrix, e.g. correlation}
 
-\item{groups}{CFA model in lavaan syntax.}
+\item{groups}{CFA model in lavaan syntax. Either \code{groups} or \code{group_list} but not both must be supplied.}
 
-\item{group_list}{List of groupings}
+\item{group_list}{List of groupings. Either \code{groups} or \code{group_list} but not both must be supplied.}
 
 \item{absolute}{Use the absolute values of A (defaults to TRUE)}
 }
@@ -21,10 +21,10 @@ multi: data frame for making box plots for block-specific tests
 overall: data frame for making box plots for overall test
 }
 \description{
-This function prepares the data for making box plots
+This function prepares the data for making box plots.
 }
 \examples{
-library(matrixTest)
+library(matrixStrucTest)
 library(ggplot2)
 
 data("big5")

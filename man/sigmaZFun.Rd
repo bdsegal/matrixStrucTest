@@ -2,7 +2,7 @@
 % Please edit documentation in R/pearson_filon.R
 \name{sigmaZFun}
 \alias{sigmaZFun}
-\title{Utility function}
+\title{Sub-routine to get covariance of z-transformed variables}
 \usage{
 sigmaZFun(s, t, index, A, Sigma)
 }
@@ -18,5 +18,5 @@ sigmaZFun(s, t, index, A, Sigma)
 \item{Sigma}{Variance-covariances of correlation matrix A}
 }
 \description{
-Utility function
+This sub-routine is called by \code{X2fun}.
 }

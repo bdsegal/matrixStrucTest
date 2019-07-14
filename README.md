@@ -1,22 +1,23 @@
-# matrixTest
+# matrixStrucTest
 
-Tests for block-diagonal structure in symmetric matrices (e.g. correlation matrices) under the null hypothesis of exchangeable off-diagonal elements. As described in Segal et al. (2019), these tests can be useful for construct validation either by themselves or as a complement to confirmatory factor analysis. Monte Carlo methods are used to approximate the permutation p-value with Hubert's Gamma (Hubert, 1976) and a t-statistic with unequal variance. This package also implements the Chi-squared statistic described by Steiger (1980).
+Tests for block-diagonal structure in symmetric matrices (e.g. correlation matrices) under the null hypothesis of exchangeable off-diagonal elements. As described in Segal et al. (2019), these tests can be useful for construct validation either by themselves or as a complement to confirmatory factor analysis. Monte Carlo methods are used to approximate the permutation p-value with Hubert's Gamma (Hubert, 1976) and a t-statistic. This package also implements the chi-squared statistic described by Steiger (1980).
 
 ## Installation
 
 ```{r}
+# From GitHub
 library("devtools")
-install_github("bdsegal/matrixTest")
+install_github("bdsegal/matrixStrucTest")
 ```
 
 ## Examples
 
 ```{r}
-library(matrixTest)
+library(matrixStrucTest)
 library(ggplot2)
 library(reshape2)
      
-# prepare data for matrixTest -------------------------------------------------
+# prepare data for matrixStrucTest -------------------------------------------------
 data("big5")
 
 # get column numbers for questionnaire items
@@ -33,7 +34,7 @@ groups <- "extrovert ~ E1 + E2 + E3 + E4 + E5 + E6 + E7 + E8 + E9 + E10
            open ~ O1 + O2 + O3 + O4 + O5 + O6 + O7 + O8 + O9 + O10"
      
 # compute permutation p-values ------------------------------------------------
-result <- matrixTest(A = A, groups = groups, B = 1000, absolute = TRUE)
+result <- matrixStrucTest(A = A, groups = groups, B = 1000, absolute = TRUE)
 result
 
 # Visualize groups ------------------------------------------------------------
@@ -55,6 +56,6 @@ ggplot(aes(x = x, y = y, fill = abs(value)), data = Am)+
 
 Hubert, L., Schultz, J. (1976) Quadratic assignment as a general data analysis strategy. British Journal of Mathematical and Statistical Psychology, 29(2):190–241.
 
-Steiger, J. H. (1980). Tests for comparing elements of a correlation matrix. Psychological Bulletin, 87(2):245–251.
-
 Segal, B. D., Braun, T., Gonzalez, R., and Elliott, M. R. (2019). Tests of matrix structure for construct validation. Psychometrika, 84(1), 65-83.
+
+Steiger, J. H. (1980). Tests for comparing elements of a correlation matrix. Psychological Bulletin, 87(2):245–251.

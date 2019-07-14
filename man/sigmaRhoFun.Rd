@@ -2,7 +2,7 @@
 % Please edit documentation in R/pearson_filon.R
 \name{sigmaRhoFun}
 \alias{sigmaRhoFun}
-\title{Utility function}
+\title{Sub-routine to compute OLS estimates of covariance between correlations}
 \usage{
 sigmaRhoFun(j, k, h, m, A)
 }
@@ -18,5 +18,5 @@ sigmaRhoFun(j, k, h, m, A)
 \item{A}{Correlation matrix}
 }
 \description{
-Utility function
+This sub-routine is called by \code{X2fun}.
 }
