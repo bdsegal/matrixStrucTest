@@ -154,7 +154,6 @@ matrixStrucTest <- function(A, group_list = NULL, groups = NULL, B = 1000, absol
   #' @return Gamma_max_two_sided: Vector of max Hubert's Gamma statistics from permuted A (two-sided)
   #' @return B: number of Monte Carlo resamples
   #' @return group_list: List of column/row indices corresponding to each group
-  #' @keywords Hubert's Gamma, t-statistic, permutation, MC resampling
   #' @export
   #' @examples
   #' # example for matrixStrucTest package

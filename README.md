@@ -5,9 +5,7 @@ Tests for block-diagonal structure in symmetric matrices (e.g. correlation matri
 ## Installation
 
 ```{r}
-# From GitHub
-library("devtools")
-install_github("bdsegal/matrixStrucTest")
+install.packages("matrixStrucTest")
 ```
 
 ## Examples

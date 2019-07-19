@@ -129,9 +129,3 @@ ggplot(aes(x = x, y = y, fill = abs(value)), data = Am)+
   labs(x = "", y = "")+
   theme(axis.text.x = element_text(angle = 90, vjust = .35,hjust=1))
 }
-\keyword{Gamma,}
-\keyword{Hubert's}
-\keyword{MC}
-\keyword{permutation,}
-\keyword{resampling}
-\keyword{t-statistic,}
