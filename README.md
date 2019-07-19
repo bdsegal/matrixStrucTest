@@ -54,6 +54,6 @@ ggplot(aes(x = x, y = y, fill = abs(value)), data = Am)+
 
 Hubert, L., Schultz, J. (1976) Quadratic assignment as a general data analysis strategy. British Journal of Mathematical and Statistical Psychology, 29(2):190–241.
 
-Segal, B. D., Braun, T., Gonzalez, R., and Elliott, M. R. (2019). Tests of matrix structure for construct validation. Psychometrika, 84(1), 65-83.
+Segal, B. D., Braun, T., Gonzalez, R., and Elliott, M. R. (2019). Tests of matrix structure for construct validation. Psychometrika, 84(1), 65-83. [doi.org/10.1007/s11336-018-9647-4](https://doi.org/10.1007/s11336-018-9647-4). (open-access [view-only version](https://rdcu.be/bb49z)).
 
 Steiger, J. H. (1980). Tests for comparing elements of a correlation matrix. Psychological Bulletin, 87(2):245–251.
